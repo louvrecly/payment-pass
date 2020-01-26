@@ -4,62 +4,11 @@ import './dialog_box.dart';
 
 class PayButton extends StatelessWidget {
 
-  // dynamic _makeStripePayment(BuildContext context) async {
-  //   var environment = 'rest'; // or 'production'
+  final String environment;
 
-  //   if (!(await FlutterGooglePay.isAvailable(environment))) {
-  //     return DialogBox().show(
-  //       context: context,
-  //       title: 'Google pay not available',
-  //       content: Wrap(),
-  //       actions: <Widget>[
-  //         FlatButton(
-  //           onPressed: () => Navigator.pop(context),
-  //           child: Text('Close'),
-  //         )
-  //       ],
-  //     );
-  //   } else {
-  //     PaymentItem pm = PaymentItem(
-  //         stripeToken: 'pk_test_1IV5H8NyhgGYOeK6vYV3Qw8f',
-  //         stripeVersion: "2018-11-08",
-  //         currencyCode: "usd",
-  //         amount: "0.10",
-  //         gateway: 'stripe');
+  PayButton({ this.environment = 'test' });
 
-  //     FlutterGooglePay.makePayment(pm).then((Result result) {
-  //       if (result.status == ResultStatus.SUCCESS) {
-  //         return DialogBox().show(
-  //           context: context,
-  //           title: 'Success',
-  //           content: Wrap(),
-  //           actions: <Widget>[
-  //             FlatButton(
-  //               onPressed: () => Navigator.pop(context),
-  //               child: Text('Close'),
-  //             )
-  //           ],
-  //         );
-  //       }
-  //     }).catchError((dynamic error) {
-  //       return DialogBox().show(
-  //         context: context,
-  //         title: error.toString(),
-  //         content: Wrap(),
-  //         actions: <Widget>[
-  //           FlatButton(
-  //             onPressed: () => Navigator.pop(context),
-  //             child: Text('Close'),
-  //           )
-  //         ],
-  //       );
-  //     });
-  //   }
-  // }
-
-  dynamic _makeCustomPayment(BuildContext context) async {
-    var environment = 'test'; // or 'production'
-
+  dynamic _makePayment({ BuildContext context, String paymentType = 'stripe' }) async {
     if (!(await FlutterGooglePay.isAvailable(environment))) {
       return DialogBox().show(
         context: context,
@@ -75,24 +24,35 @@ class PayButton extends StatelessWidget {
         ],
       );
     } else {
-      // docs https://developers.google.com/pay/api/android/guides/tutorial
-      PaymentBuilder pb = PaymentBuilder()
-        ..addGateway("example")
-        ..addTransactionInfo("0.1", "USD")
-        ..addAllowedCardAuthMethods(["PAN_ONLY", "CRYPTOGRAM_3DS"])
-        ..addAllowedCardNetworks(
-            ["AMEX", "DISCOVER", "JCB", "MASTERCARD", "VISA"])
-        ..addBillingAddressRequired(true)
-        ..addPhoneNumberRequired(true)
-        ..addShippingAddressRequired(true)
-        ..addShippingSupportedCountries(["US", "GB"])
-        ..addMerchantInfo("Example");
+      if (paymentType == 'stripe') {
+        // Stripe Payment
+        PaymentItem pm = PaymentItem(
+            stripeToken: 'pk_test_1IV5H8NyhgGYOeK6vYV3Qw8f',
+            stripeVersion: "2018-11-08",
+            currencyCode: "usd",
+            amount: "0.10",
+            gateway: 'stripe');
 
-      FlutterGooglePay.makeCustomPayment(pb.build()).then((Result result) {
-        if (result.status == ResultStatus.SUCCESS) {
+        FlutterGooglePay.makePayment(pm).then((Result result) {
+          if (result.status == ResultStatus.SUCCESS) {
+            return DialogBox().show(
+              context: context,
+              title: '${paymentType.toUpperCase()} Payment Success',
+              content: Text(
+                result.description
+              ),
+              actions: <Widget>[
+                FlatButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('Close'),
+                )
+              ],
+            );
+          }
+        }).catchError((dynamic error) {
           return DialogBox().show(
             context: context,
-            title: 'Success',
+            title: error.toString(),
             content: Wrap(),
             actions: <Widget>[
               FlatButton(
@@ -101,12 +61,57 @@ class PayButton extends StatelessWidget {
               )
             ],
           );
-        } else if (result.error != null) {
+        });
+
+      } else {
+        // Custom Payment
+        // docs https://developers.google.com/pay/api/android/guides/tutorial
+        PaymentBuilder pb = PaymentBuilder()
+          ..addGateway(paymentType)
+          ..addTransactionInfo("0.10", "USD")
+          ..addAllowedCardAuthMethods(["PAN_ONLY", "CRYPTOGRAM_3DS"])
+          ..addAllowedCardNetworks(
+              ["AMEX", "DISCOVER", "JCB", "MASTERCARD", "VISA"])
+          ..addBillingAddressRequired(true)
+          ..addPhoneNumberRequired(true)
+          ..addShippingAddressRequired(true)
+          ..addShippingSupportedCountries(["US", "GB"])
+          ..addMerchantInfo(paymentType);
+
+        FlutterGooglePay.makeCustomPayment(pb.build()).then((Result result) {
+          if (result.status == ResultStatus.SUCCESS) {
+            return DialogBox().show(
+              context: context,
+              title: '${paymentType.toUpperCase()} Payment Success',
+              content: Wrap(),
+              actions: <Widget>[
+                FlatButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('Close'),
+                )
+              ],
+            );
+          } else if (result.error != null) {
+            return DialogBox().show(
+              context: context,
+              title: '${paymentType.toUpperCase()} Payment Failed',
+              content: Text(
+                result.error.toString()
+              ),
+              actions: <Widget>[
+                FlatButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('Close'),
+                )
+              ],
+            );
+          }
+        }).catchError((error) {
           return DialogBox().show(
             context: context,
-            title: 'Payment Failed',
+            title: 'Error',
             content: Text(
-              result.error.toString()
+              error.toString()
             ),
             actions: <Widget>[
               FlatButton(
@@ -115,30 +120,16 @@ class PayButton extends StatelessWidget {
               )
             ],
           );
-        }
-      }).catchError((error) {
-        return DialogBox().show(
-          context: context,
-          title: 'Error',
-          content: Text(
-            error.toString()
-          ),
-          actions: <Widget>[
-            FlatButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('Close'),
-            )
-          ],
-        );
-      });
+        });
+      }
+
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return RaisedButton(
-      // onPressed: () => _makeStripePayment(context),
-      onPressed: () => _makeCustomPayment(context),
+      onPressed: () => _makePayment(context: context),
       textColor: Colors.white,
       padding: const EdgeInsets.all(0.0),
       shape: RoundedRectangleBorder(
