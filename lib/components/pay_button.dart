@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import '../models/payment_result.dart';
-import '../blocs/payment_bloc.dart';
+import '../blocs/google_pay_bloc.dart';
 import './dialog_box.dart';
 
 class PayButton extends StatelessWidget {
 
-  dynamic _makePayment(BuildContext context, PaymentBloc paymentBloc) async {
-    PaymentResult paymentResult = await paymentBloc.makePayemnt(paymentType: 'custom');
+  dynamic _makePayment(BuildContext context, GooglePayBloc googlePayBloc) async {
+    PaymentResult paymentResult = await googlePayBloc.makePayemnt(paymentType: 'custom');
     return DialogBox().show(
       context: context,
       title: paymentResult.title,
@@ -22,9 +22,9 @@ class PayButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final PaymentBloc paymentBloc = PaymentBloc(environment: 'test');
+    final GooglePayBloc googlePayBloc = GooglePayBloc(environment: 'test');
     return RaisedButton(
-      onPressed: () => _makePayment(context, paymentBloc),
+      onPressed: () => _makePayment(context, googlePayBloc),
       textColor: Colors.white,
       padding: const EdgeInsets.all(0.0),
       shape: RoundedRectangleBorder(

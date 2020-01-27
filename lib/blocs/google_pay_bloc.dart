@@ -1,11 +1,11 @@
 import 'package:flutter_google_pay/flutter_google_pay.dart';
 import '../models/payment_result.dart';
 
-class PaymentBloc {
+class GooglePayBloc {
 
   final String environment;
 
-  PaymentBloc({ this.environment = 'test' });
+  GooglePayBloc({ this.environment = 'test' });
 
   Future<PaymentResult> makePayemnt({ String paymentType = 'stripe' }) async {
     if (!(await FlutterGooglePay.isAvailable(environment))) {
