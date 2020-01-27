@@ -1,22 +1,35 @@
 PODS:
   - Flutter (1.0.0)
+  - flutter_apple_pay (0.0.1):
+    - Flutter
+    - Stripe
   - flutter_google_pay (0.0.1):
     - Flutter
+  - Stripe (18.4.0)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - flutter_apple_pay (from `.symlinks/plugins/flutter_apple_pay/ios`)
   - flutter_google_pay (from `.symlinks/plugins/flutter_google_pay/ios`)
+
+SPEC REPOS:
+  trunk:
+    - Stripe
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  flutter_apple_pay:
+    :path: ".symlinks/plugins/flutter_apple_pay/ios"
   flutter_google_pay:
     :path: ".symlinks/plugins/flutter_google_pay/ios"
 
 SPEC CHECKSUMS:
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  flutter_apple_pay: c84fa9c022bf0daa2e4f138a321c370123861c25
   flutter_google_pay: 27051ca15ef1ed02f9cf4d71231ba80cba1eb5fe
+  Stripe: fa837c60f0644b488c994024ce7d9b001ea4e97c
 
-PODFILE CHECKSUM: 1b66dae606f75376c5f2135a8290850eeb09ae83
+PODFILE CHECKSUM: 48d28befa5177672e57087e82e48caa1df133253
 
 COCOAPODS: 1.8.4
