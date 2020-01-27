@@ -5,24 +5,26 @@ import './dialog_box.dart';
 
 class PayButton extends StatelessWidget {
 
+  dynamic _makePayment(BuildContext context, PaymentBloc paymentBloc) async {
+    PaymentResult paymentResult = await paymentBloc.makePayemnt(paymentType: 'custom');
+    return DialogBox().show(
+      context: context,
+      title: paymentResult.title,
+      content: Text(paymentResult.text),
+      actions: <Widget>[
+        FlatButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text('Close'),
+        )
+      ]
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final PaymentBloc paymentBloc = PaymentBloc(environment: 'test');
     return RaisedButton(
-      onPressed: () async {
-        PaymentResult paymentResult = await paymentBloc.makePayemnt(paymentType: 'custom');
-        return DialogBox().show(
-          context: context,
-          title: paymentResult.title,
-          content: Text(paymentResult.text),
-          actions: <Widget>[
-            FlatButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('Close'),
-            )
-          ]
-        );
-      },
+      onPressed: () => _makePayment(context, paymentBloc),
       textColor: Colors.white,
       padding: const EdgeInsets.all(0.0),
       shape: RoundedRectangleBorder(
