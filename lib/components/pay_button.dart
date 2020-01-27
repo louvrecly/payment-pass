@@ -15,6 +15,7 @@ class PayButton extends StatelessWidget {
   dynamic _makePayment(BuildContext context, ApplePayBloc applePayBloc) async {
     // PaymentResult paymentResult = await googlePayBloc.makePayment(paymentType: 'custom');
     PaymentResult paymentResult = await applePayBloc.makePayment();
+
     return DialogBox().show(
       context: context,
       title: paymentResult.title,
@@ -59,7 +60,7 @@ class PayButton extends StatelessWidget {
         ),
         child: Text(
           title,
-          style: TextStyle(fontSize: 20)
+          style: TextStyle(fontSize: 20),
         ),
       ),
     );
