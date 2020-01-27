@@ -11,7 +11,6 @@ class PayButton extends StatelessWidget {
     return RaisedButton(
       onPressed: () async {
         PaymentResult paymentResult = await paymentBloc.makePayemnt(paymentType: 'custom');
-        print('paymentResult = $paymentResult');
         return DialogBox().show(
           context: context,
           title: paymentResult.title,
