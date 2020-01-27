@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/payment_result.dart';
-import '../blocs/google_pay_bloc.dart';
+// import '../blocs/google_pay_bloc.dart';
+import '../blocs/apple_pay_bloc.dart';
 import 'dialog_box.dart';
 
 class PayButton extends StatelessWidget {
@@ -10,8 +11,10 @@ class PayButton extends StatelessWidget {
 
   PayButton(this.title);
 
-  dynamic _makePayment(BuildContext context, GooglePayBloc googlePayBloc) async {
-    PaymentResult paymentResult = await googlePayBloc.makePayment(paymentType: 'custom');
+  // dynamic _makePayment(BuildContext context, GooglePayBloc googlePayBloc) async {
+  dynamic _makePayment(BuildContext context, ApplePayBloc applePayBloc) async {
+    // PaymentResult paymentResult = await googlePayBloc.makePayment(paymentType: 'custom');
+    PaymentResult paymentResult = await applePayBloc.makePayment();
     return DialogBox().show(
       context: context,
       title: paymentResult.title,
@@ -27,9 +30,11 @@ class PayButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final GooglePayBloc googlePayBloc = Provider.of<GooglePayBloc>(context);
+    // final GooglePayBloc googlePayBloc = Provider.of<GooglePayBloc>(context);
+    final ApplePayBloc applePayBloc = Provider.of<ApplePayBloc>(context);
     return RaisedButton(
-      onPressed: () => _makePayment(context, googlePayBloc),
+      // onPressed: () => _makePayment(context, googlePayBloc),
+      onPressed: () => _makePayment(context, applePayBloc),
       textColor: Colors.white,
       padding: const EdgeInsets.all(0.0),
       shape: RoundedRectangleBorder(

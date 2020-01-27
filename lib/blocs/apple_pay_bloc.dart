@@ -29,6 +29,7 @@ class ApplePayBloc extends Bloc {
       );
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
+
       return PaymentResult(
         title: 'Apple Pay Failed',
         text: platformVersion.toString(),
