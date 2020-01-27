@@ -1,13 +1,14 @@
 import 'package:flutter_google_pay/flutter_google_pay.dart';
 import '../models/payment_result.dart';
+import 'bloc.dart';
 
-class GooglePayBloc {
+class GooglePayBloc extends Bloc {
 
   final String environment;
 
   GooglePayBloc({ this.environment = 'test' });
 
-  Future<PaymentResult> makePayemnt({ String paymentType = 'stripe' }) async {
+  Future<PaymentResult> makePayment({ String paymentType = 'stripe' }) async {
     if (!(await FlutterGooglePay.isAvailable(environment))) {
       return PaymentResult(
         title: 'Sorry',
@@ -77,6 +78,11 @@ class GooglePayBloc {
         });
       }
     }
+  }
+
+  @override
+  void dispose() {
+    print('GooglePayBloc.dispose()');
   }
 
 }

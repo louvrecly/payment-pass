@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/payment_result.dart';
 import '../blocs/google_pay_bloc.dart';
-import './dialog_box.dart';
+import 'dialog_box.dart';
 
 class PayButton extends StatelessWidget {
 
+  final String title;
+
+  PayButton(this.title);
+
   dynamic _makePayment(BuildContext context, GooglePayBloc googlePayBloc) async {
-    PaymentResult paymentResult = await googlePayBloc.makePayemnt(paymentType: 'custom');
+    PaymentResult paymentResult = await googlePayBloc.makePayment(paymentType: 'custom');
     return DialogBox().show(
       context: context,
       title: paymentResult.title,
@@ -22,7 +27,7 @@ class PayButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final GooglePayBloc googlePayBloc = GooglePayBloc(environment: 'test');
+    final GooglePayBloc googlePayBloc = Provider.of<GooglePayBloc>(context);
     return RaisedButton(
       onPressed: () => _makePayment(context, googlePayBloc),
       textColor: Colors.white,
@@ -47,8 +52,8 @@ class PayButton extends StatelessWidget {
           horizontal: 30.0,
           vertical: 10.0,
         ),
-        child: const Text(
-          'Pay Now!',
+        child: Text(
+          title,
           style: TextStyle(fontSize: 20)
         ),
       ),
