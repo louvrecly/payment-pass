@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../blocs/bloc.dart';
 import '../blocs/google_pay_bloc.dart';
+import '../blocs/apple_pay_bloc.dart';
 import '../components/pay_button.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -21,6 +22,10 @@ class _MyHomePageState extends State<MyHomePage> {
       providers: [
         Provider(
           create: (BuildContext context) => GooglePayBloc(environment: 'test'),
+          dispose: (BuildContext context, Bloc bloc) => bloc.dispose(),
+        ),
+        Provider(
+          create: (BuildContext context) => ApplePayBloc(environment: 'test'),
           dispose: (BuildContext context, Bloc bloc) => bloc.dispose(),
         ),
       ],
