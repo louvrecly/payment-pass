@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import '../models/payment_result.dart';
-// import '../blocs/google_pay_bloc.dart';
+import '../blocs/payment_bloc.dart';
+import '../blocs/google_pay_bloc.dart';
 import '../blocs/apple_pay_bloc.dart';
 import 'dialog_box.dart';
 
 class PayButton extends StatelessWidget {
 
-  final String title;
-
-  PayButton(this.title);
-
-  // dynamic _makePayment(BuildContext context, GooglePayBloc googlePayBloc) async {
-  dynamic _makePayment(BuildContext context, ApplePayBloc applePayBloc) async {
-    // PaymentResult paymentResult = await googlePayBloc.makePayment(paymentType: 'custom');
-    PaymentResult paymentResult = await applePayBloc.makePayment();
+  dynamic _makePayment(BuildContext context, PaymentBloc paymentBloc) async {
+    PaymentResult paymentResult = await paymentBloc.makePayment();
 
     return DialogBox().show(
       context: context,
@@ -31,11 +27,26 @@ class PayButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final GooglePayBloc googlePayBloc = Provider.of<GooglePayBloc>(context);
-    final ApplePayBloc applePayBloc = Provider.of<ApplePayBloc>(context);
+    final platform = Theme.of(context).platform;
+    String paymentType;
+    PaymentBloc paymentBloc;
+
+    switch(platform) {
+      case TargetPlatform.iOS:
+        paymentType = 'Apple';
+        paymentBloc = Provider.of<ApplePayBloc>(context);
+        break;
+      case TargetPlatform.android:
+        paymentType = 'Google';
+        paymentBloc = Provider.of<GooglePayBloc>(context);
+        break;
+      default:
+        paymentType = 'Unsupported';
+        paymentBloc = null;
+    }
+
     return RaisedButton(
-      // onPressed: () => _makePayment(context, googlePayBloc),
-      onPressed: () => _makePayment(context, applePayBloc),
+      onPressed: paymentBloc == null ? null : () => _makePayment(context, paymentBloc),
       textColor: Colors.white,
       padding: const EdgeInsets.all(0.0),
       shape: RoundedRectangleBorder(
@@ -59,7 +70,7 @@ class PayButton extends StatelessWidget {
           vertical: 10.0,
         ),
         child: Text(
-          title,
+          '$paymentType Pay',
           style: TextStyle(fontSize: 20),
         ),
       ),
