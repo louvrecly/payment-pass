@@ -1,17 +1,19 @@
 import 'package:flutter_apple_pay/flutter_apple_pay.dart';
 import 'package:flutter/services.dart';
 import '../models/payment_result.dart';
-import 'bloc.dart';
+import 'payment_bloc.dart';
 
-class ApplePayBloc extends Bloc {
+class ApplePayBloc extends PaymentBloc {
 
   final String environment;
 
   ApplePayBloc({ this.environment = 'test' });
 
+  @override
   Future<PaymentResult> makePayment() async {
     dynamic platformVersion;
     PaymentItem paymentItems = PaymentItem(label: 'Label', amount: 0.10);
+
     try {
       platformVersion = await FlutterApplePay.makePayment(
         countryCode: "US",
@@ -27,12 +29,12 @@ class ApplePayBloc extends Bloc {
         title: 'Apple Pay Success',
         text: platformVersion.toString(),
       );
-    } on PlatformException {
+    } on PlatformException catch(err) {
       platformVersion = 'Failed to get platform version.';
 
       return PaymentResult(
-        title: 'Apple Pay Failed',
-        text: platformVersion.toString(),
+        title: platformVersion.toString(),
+        text: err.toString(),
       );
     }
   }
