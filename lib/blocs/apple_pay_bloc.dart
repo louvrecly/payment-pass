@@ -23,11 +23,11 @@ class ApplePayBloc extends PaymentBloc {
         paymentItems: [paymentItems],
         stripePublishedKey: "pk_test_TYooMQauvdEDq54NiTphI7jx"
       );
-      print(platformVersion);
+      final String text = platformVersion['message'];
 
       return PaymentResult(
-        title: 'Apple Pay Success',
-        text: platformVersion.toString(),
+        title: 'Apple Pay Result',
+        text: text,
       );
     } on PlatformException catch(err) {
       platformVersion = 'Failed to get platform version.';
